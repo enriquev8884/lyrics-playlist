@@ -1,7 +1,8 @@
 require 'lyricfy'
 require 'rspotify'
+require 'pp'
 
-RSpotify.authenticate("client-id", "client-secret")
+RSpotify.authenticate(ENV["SPOTIFY_ID"], ENV["SPOTIFY_SECRET"])
 
 class Song
     attr_reader :name, :artist, :album_img, :lyrics
@@ -37,10 +38,12 @@ class Playlist
         playlist = RSpotify::Playlist.find(@user,@playlist_id)
         
         # get playlist name
-        
+        @name = playlist.name
     
         # fill the @songs array with new instances of the Song class
-        
+        playlist.tracks.each do |track|
+            @songs << Song.new(track.name, track.artists.first.name, track.album.images.first["url"])
+        end
     end
     
     def get_lyrics
@@ -52,8 +55,16 @@ class Playlist
 end
 
 # use this to test out the API
-spotify_top_tracks_playlist = RSpotify::Playlist.find("spotify","5FJXhjdILmRA2z5bvz4nzf")
-puts spotify_top_tracks_playlist
-
+playlist = RSpotify::Playlist.find("spotify","5FJXhjdILmRA2z5bvz4nzf")
+                                  #"avatarquique222, 4sfMcuxMs96v2AiLmSyORE"
+        
+        # get playlist name
+        @name = playlist.name
+    
+        # fill the @songs array with new instances of the Song class
+        playlist.tracks.each do |track|
+            pp "#{track.name} by #{track.artists.first.name}"
+        end
+# puts spotify_top_tracks_playlist.track.album.images.first["url"]
 # use this to test out the classes
 # spotify_top_tracks = Playlist.new("spotify","5FJXhjdILmRA2z5bvz4nzf")
